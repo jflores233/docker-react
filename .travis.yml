@@ -1,9 +1,25 @@
+language: generic
 sudo: required
+
 services:
   - docker
 
 before_install:
-  - docker build -t jflores233/docker-react -f Dockerfile.dev .
+  - docker build -t jflores/docker-react -f Dockerfile.dev .
 
 script:
-  - docker run jflores233/docker-react npm run test -- --coverage
+  - docker run -e CI=true jflores/docker-react npm run test -- --coverage
+
+deploy:
+  provider: elasticbeanstalk
+  region: "us-east-2"
+  app: "Docker-react-trial-env"
+  env: "Docker-react-trial-env-env"
+  bucket_name: "elasticbeanstalk-us-east-2-755083493869"
+  bucket_path: "Docker-react-trial-env"
+  on:
+    branch: main
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: 
+    secure: "$AWS_SECRET_KEY"
+
